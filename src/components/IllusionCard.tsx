@@ -1,95 +1,57 @@
-import { useState } from "react";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Heart, MessageCircle } from "lucide-react";
 
 export interface IllusionProps {
   id: string;
   title: string;
   description: string;
-  image: string;
+  image?: string;
   author: {
     name: string;
-    avatar: string;
+    avatar?: string;
   };
   likes: number;
   comments: number;
 }
 
-const IllusionCard = ({
-  id,
-  title,
-  description,
-  image,
-  author,
-  likes,
-  comments,
-}: IllusionProps) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(likes);
-
-  const handleLike = () => {
-    if (liked) {
-      setLikeCount(likeCount - 1);
-    } else {
-      setLikeCount(likeCount + 1);
-    }
-    setLiked(!liked);
-  };
-
+const IllusionCard = ({ id, title, description, image, author, likes, comments }: IllusionProps) => {
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="p-4">
-        <div className="flex items-center gap-3">
-          <Avatar>
-            <AvatarImage src={author.avatar} alt={author.name} />
-            <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <Link to={`/profile/${author.name}`} className="font-medium hover:underline">
-              {author.name}
-            </Link>
-          </div>
+    <Link to={`/illusion/${id}`}>
+      <Card className="overflow-hidden h-full transition-all hover:shadow-md">
+        <div className="aspect-square sm:aspect-[4/3] overflow-hidden bg-muted">
+          <img
+            src={image || "/placeholder.svg"}
+            alt={title}
+            className="w-full h-full object-cover transition-transform hover:scale-105"
+          />
         </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <Link to={`/illusion/${id}`}>
-          <div className="relative overflow-hidden aspect-square">
-            <img
-              src={image || "/placeholder.svg"}
-              alt={title}
-              className="w-full h-full object-cover transition-transform hover:scale-105"
-            />
+        <CardContent className="p-4">
+          <h3 className="font-semibold text-lg line-clamp-1">{title}</h3>
+          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{description}</p>
+        </CardContent>
+        <CardFooter className="p-4 pt-0 flex justify-between">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={author.avatar} alt={author.name} />
+              <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-muted-foreground">{author.name}</span>
           </div>
-          <div className="p-4">
-            <h3 className="font-semibold text-lg mb-1">{title}</h3>
-            <p className="text-muted-foreground line-clamp-2">{description}</p>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Heart className="h-4 w-4" />
+              <span>{likes}</span>
+            </div>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <MessageCircle className="h-4 w-4" />
+              <span>{comments}</span>
+            </div>
           </div>
-        </Link>
-      </CardContent>
-      <CardFooter className="flex justify-between p-4 pt-0">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className={`gap-1 ${liked ? 'text-red-500' : ''}`}
-            onClick={handleLike}
-          >
-            <Heart className={`h-5 w-5 ${liked ? 'fill-red-500' : ''}`} />
-            <span>{likeCount}</span>
-          </Button>
-          <Button variant="ghost" size="sm" className="gap-1">
-            <MessageCircle className="h-5 w-5" />
-            <span>{comments}</span>
-          </Button>
-        </div>
-        <Button variant="ghost" size="icon">
-          <Share2 className="h-5 w-5" />
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };
 
